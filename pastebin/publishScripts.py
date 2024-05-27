@@ -2,9 +2,9 @@ import requests
 
 # My Pastebin API key
 PASTEBIN_API_KEY = "Etpn9j2QNatzXjOSU4nLvjgcwc3x2TwF"
-# We are just gonna hardcode denis' info for now
-SCRIPT_PATH = "denis.lua"
-PASTEBIN_TITLE = "Denis"
+# We are just gonna hardcode dennis' info for now
+SCRIPT_PATH = "dennis.lua"
+PASTEBIN_TITLE = "Dennis"
 
 def upload_to_pastebin(api_key, script_path, title):
     with open(script_path, 'r') as file:
