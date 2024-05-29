@@ -31,11 +31,14 @@ def upload_to_pastebin(api_key, script_path, title):
 def main():
   try:
     pastebin_url = upload_to_pastebin(PASTEBIN_API_KEY, SCRIPT_PATH, PASTEBIN_TITLE)
+    pastebin_command = f"pastebin get {pastebin_url.split('/')[-1]} tood.lua"
     print(f"Script uploaded to Pastebin: {pastebin_url}")
-
+    print(f"Script download command: {pastebin_command}")
+    print(f"Script replace command: os.remove('tood.lua') {pastebin_command}")
+    
     # Save the Pastebin link to a file
     with open('pastebin_url.txt', 'w') as url_file:
-      url_file.write(pastebin_url)
+      url_file.write(pastebin_command)
   except Exception as e:
     print(e)
 
