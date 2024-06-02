@@ -233,7 +233,6 @@ function MoveTo(targetX, targetY, targetZ)
         turtleDirectionFacing = FaceDirection(turtleDirectionFacing, "west")
         MineOrMoveForward()
 
-        sleep(0.5)
         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
       end
     end
@@ -248,11 +247,11 @@ end
 
 
 function FaceDirection(currentDirection, targetDirection)
-  print("Currently Facing: ", currentDirection, "\nTarget Direction: ", targetDirection)
   if currentDirection == targetDirection then
     return currentDirection
+  else 
+    return turtle.turnTo(targetDirection)
   end
-  return turtle.turnTo(targetDirection)
 end
 
 -- Function to turn the turtle to a specific cardinal direction
@@ -276,12 +275,17 @@ function turtle.turnTo(direction)
     currentDirection = "north"
   end
 
+  -- WEST / NORTH 
+ -- NORTH / SOUTH 
+-- SOUTH / NORTH \
+-- SOUTH / WEST
+-- EAST / NORTH 
+
   local directions = { "north", "east", "south", "west" }
   local currentIndex = nil
   for i, dir in ipairs(directions) do
     if dir == currentDirection then
       currentIndex = i
-      return currentDirection
     end
   end
 
@@ -289,19 +293,26 @@ function turtle.turnTo(direction)
   for i, dir in ipairs(directions) do
     if dir == direction then
       targetIndex = i
-      return currentDirection
     end
   end
 
   local difference = targetIndex - currentIndex
-  if difference == 1 or difference == -3 then
+  if difference == 1 or difference == -3 then 
     turtle.turnRight()
-  elseif difference == -1 or difference == 3 then
-    turtle.turnLeft()
-  elseif math.abs(difference) == 2 then
-    turtle.turnRight()
-    turtle.turnRight()
+    sleep(2)
   end
+
+  if math.abs(difference) == 2 then 
+    turtle.turnRight()
+    turtle.turnRight()
+    sleep(2)
+  end
+
+  if difference == -1 or difference == 3 then
+    turtle.turnLeft()
+    sleep(2)
+  end
+
   return currentDirection
 end
 
