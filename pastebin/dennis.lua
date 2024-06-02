@@ -262,6 +262,7 @@ function turtle.turnTo(direction, cachedDirection)
     currentDirection = cachedDirection
   else 
     print("Locating current direction")
+    
     local currentX, _, currentZ = gps.locate()
     MineOrMoveForward()
     local newX, _, newZ = gps.locate()
@@ -309,20 +310,16 @@ function turtle.turnTo(direction, cachedDirection)
   if difference == 1 or difference == -3 then 
     turtle.turnRight()
     sleep(2)
-  end
-
-  if math.abs(difference) == 2 then 
+  elseif math.abs(difference) == 2 then 
     turtle.turnRight()
     turtle.turnRight()
     sleep(2)
-  end
-
-  if difference == -1 or difference == 3 then
+  elseif difference == -1 or difference == 3 then
     turtle.turnLeft()
     sleep(2)
   end
 
-  return currentDirection
+  return direction
 end
 
 local function main()
