@@ -170,6 +170,7 @@ local function calculateDeltas(targetX, targetY, targetZ)
   local deltaX = targetX - currentX
   local deltaY = targetY - currentY
   local deltaZ = targetZ - currentZ
+  print("Current Deltas", deltaX, deltaY, deltaZ)
   return deltaX, deltaY, deltaZ
 end
 
@@ -182,6 +183,7 @@ function MoveTo(targetX, targetY, targetZ)
     print("Initial Delta", deltaX, deltaY, deltaZ)
     -- Move in the Y direction first (up or down)
     while deltaY ~= 0 do
+      print("Moving towards Y")
       if deltaY > 0 then
         mineOrMoveUp()
         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
@@ -205,6 +207,7 @@ function MoveTo(targetX, targetY, targetZ)
 
     -- Move in the Z direction last (north or south)
     while deltaZ ~= 0 do
+      print("Moving towards Z")
       if deltaZ > 0 then
         while turtle.detect() do
           turtle.dig()
@@ -224,6 +227,7 @@ function MoveTo(targetX, targetY, targetZ)
     
     -- Move in the X direction next (east or west)
     while deltaX ~= 0 do
+      print("Moving towards X")
       if deltaX > 0 then
         while turtle.detect() do
           turtle.dig()
