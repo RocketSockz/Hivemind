@@ -7,6 +7,7 @@ local startingX, startingY, startingZ
 -- GPS Stuff
 local function trackStartingCoordinates()
  startingX, startingY, startingZ = gps.locate()
+ print("Set starting coordinates to: ", startingX, startingY, startingZ)
  if not startingX then
   print("GPS signal not found! Make sure you are in range of GPS satellites.")
  end
@@ -44,6 +45,13 @@ local function mineOrMoveDown()
   turtle.digDown()
  end
  turtle.down()
+end
+
+local function mineOrMoveUp()
+ while turtle.detectUp() do
+  turtle.digUp()
+ end
+ turtle.up()
 end
 
 local function moveUp()
@@ -118,12 +126,14 @@ local function mineQuarry()
  end
 end
 
-function ReturnToSurface(customDepth)
- for i = 1, (customDepth or quarry_depth) do
-  moveUp()
- end
+function GetCurrentPosition()
+  local x, y, z = gps.locate()
+  if x and y and z then
+      return x, y, z
+  else
+      error("Unable to determine position, ensure the GPS network is setup correctly.")
+  end
 end
-
 -- local function returnToStart()
 --   for i = 1, quarry_size - 1 do
 --     turtle.forward()
@@ -133,7 +143,7 @@ end
 --     turtle.forward()
 --   end
 --   turtle.turnLeft()
---   for i = 1, quarry_start_distance do
+--   for i = 1, quarry_start_distance do 
 --     turtle.forward()
 --   end
 --   turtle.turnRight()
@@ -147,90 +157,144 @@ function ReturnToStart()
   return
  end
 
+ print("Current coordinates: ", GetCurrentPosition())
  MoveTo(startingX, startingY, startingZ)
- turtle.turnRight()
- turtle.turnRight()
+ -- We want the turtle to face west when it returns to the starting position
+ turtle.turnTo(3)
  print("Returned to starting coordinates.")
 end
 
 function MoveTo(targetX, targetY, targetZ)
- print("Moving to coordinates: ", targetX, targetY, targetZ)
- print(gps.locate())
- local currentX, currentY, currentZ = gps.locate()
- print("Current coordinates: ", currentX, currentY, currentZ)
- if not currentX then
-  print("GPS signal lost! Cannot move to target.")
-  return
- end
+  print("Moving to target coordinates: ", targetX, targetY, targetZ)
+  while true do
+    local currentX, currentY, currentZ = GetCurrentPosition()
+    
+    -- Calculate the differences
+    local deltaX = targetX - currentX
+    local deltaY = targetY - currentY
+    local deltaZ = targetZ - currentZ
 
- print("Matching y coordinate", targetY, currentY)
- -- Move vertically to the target y coordinate
- while currentY < targetY do
-  if turtle.detectUp() then turtle.digUp() end
-  turtle.up()
-  currentX, currentY, currentZ = gps.locate()
-  print("Moved up to: ", currentY, "Target: ", targetY)
- end
- while currentY > targetY do
-  if turtle.detectDown() then turtle.digDown() end
-  turtle.down()
-  currentX, currentY, currentZ = gps.locate()
-  print("Moved down to: ", currentY, "Target: ", targetY)
- end
+    print("Initial Delta", deltaX, deltaY, deltaZ)
+    -- Move in the Y direction first (up or down)
+    while deltaY ~= 0 do
+      if deltaY > 0 then
+        mineOrMoveUp()
+        deltaY = deltaY - 1
+      end 
+      if deltaY < 0 then
+        mineOrMoveDown()
+        deltaY = deltaY + 1
+      end
+    end 
 
- print("Matching x coordinate", targetY, currentY)
- -- Move horizontally to the target x coordinate
- if currentX < targetX then
-  turtle.turnTo(1)   -- East
-  while currentX < targetX do
-   if turtle.detect() then turtle.dig() end
-   turtle.forward()
-   currentX, currentY, currentZ = 0, 0, 0 
-   currentX, currentY, currentZ = gps.locate()
-   print("Moved X across to: ", currentX, "Target: ", targetX)
-  end
- elseif currentX > targetX then
-  turtle.turnTo(3)   -- West
-  while currentX > targetX do
-   if turtle.detect() then turtle.dig() end
-   turtle.forward()
-   currentX, currentY, currentZ = gps.locate()
-   print("Moved X across to: ", currentX, "Target: ", targetX)
-  end
- end
+    if deltaX > 0 then 
+      turtle.turnTo("east")
+    elseif deltaX < 0 then
+      turtle.turnTo("west")
+    end
 
- -- Move horizontally to the target z coordinate
- print("Matching z coordinate", targetZ, currentZ)
- if currentZ < targetZ then
-  turtle.turnTo(2)   -- South
-  while currentZ < targetZ do
-   if turtle.detect() then turtle.dig() end
-   turtle.forward()
-   currentX, currentY, currentZ = gps.locate()
-   print("Moved z across to: ", currentZ, "Target: ", targetZ)
-  end
- elseif currentZ > targetZ then
-  turtle.turnTo(0)   -- North
-  while currentZ > targetZ do
-   if turtle.detect() then turtle.dig() end
-   turtle.forward()
-   currentX, currentY, currentZ = gps.locate()
-   print("Moved z across to: ", currentZ, "Target: ", targetZ)
-  end
+    -- Move in the X direction next (east or west)
+    while deltaX ~= 0 do
+      if deltaX > 0 then
+        while turtle.detect() do
+          turtle.dig()
+         end
+         turtle.forward()
+         sleep(0.5)
+        deltaX = deltaX - 1
+      end 
+      if deltaX < 0 then
+        while turtle.detect() do
+          turtle.dig()
+         end
+         turtle.forward()
+         sleep(0.5)
+        deltaX = deltaX + 1
+      end
+    end 
+
+    if deltaZ > 0 then 
+      turtle.turnTo("south")
+    elseif deltaZ < 0 then
+      turtle.turnTo("north")
+    end
+
+    -- Move in the Z direction last (north or south)
+    while deltaZ ~= 0 do
+      if deltaZ > 0 then
+        while turtle.detect() do
+          turtle.dig()
+         end
+         turtle.forward()
+         sleep(0.5)
+        deltaZ = deltaZ - 1
+      end 
+      if deltaZ < 0 then
+        while turtle.detect() do
+          turtle.dig()
+         end
+         turtle.forward()
+         sleep(0.5)
+        deltaZ = deltaZ + 1
+      end
+    end 
+
+    local currentX, currentY, currentZ = GetCurrentPosition()
+    -- Check if we've reached the target coordinates
+    if currentX == targetX and currentY == targetY and currentZ == targetZ then
+        print("Reached target coordinates: ", targetX, targetY, targetZ)
+        break
+    end
  end
 end
 
+-- Function to turn the turtle to a specific cardinal direction
 function turtle.turnTo(direction)
- local currentHeading = select(2, gps.locate())
- local turnDirection = (direction - currentHeading + 4) % 4
- if turnDirection == 1 then
-  turtle.turnRight()
- elseif turnDirection == 2 then
-  turtle.turnRight()
-  turtle.turnRight()
- elseif turnDirection == 3 then
-  turtle.turnLeft()
- end
+  local currentX, _, currentZ = gps.locate()
+  turtle.forward()
+  local newX, _, newZ = gps.locate()
+  
+  local dx = newX - currentX
+  local dz = newZ - currentZ
+  local currentDirection
+
+  if dx == 1 then
+      currentDirection = "east"
+  elseif dx == -1 then
+      currentDirection = "west"
+  elseif dz == 1 then
+      currentDirection = "south"
+  elseif dz == -1 then
+      currentDirection = "north"
+  end
+  
+  local directions = {"north", "east", "south", "west"}
+  local currentIndex = nil
+  for i, dir in ipairs(directions) do
+      print("dir: ", dir, "currentDirection: ", currentDirection)
+      if dir == currentDirection then
+          currentIndex = i
+          break
+      end
+  end
+
+  local targetIndex = nil
+  for i, dir in ipairs(directions) do
+      if dir == direction then
+          targetIndex = i
+          break
+      end
+  end
+  
+  local difference = targetIndex - currentIndex
+  if difference == 1 or difference == -3 then
+      turtle.turnRight()
+  elseif difference == -1 or difference == 3 then
+      turtle.turnLeft()
+  elseif math.abs(difference) == 2 then
+      turtle.turnRight()
+      turtle.turnRight()
+  end
 end
 
 local function main()
