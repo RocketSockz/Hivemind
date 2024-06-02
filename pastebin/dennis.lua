@@ -179,9 +179,8 @@ function MoveTo(targetX, targetY, targetZ)
     while deltaY ~= 0 do
       if deltaY > 0 then
         mineOrMoveUp()
-        deltaY = deltaY - 1
-      end 
-      if deltaY < 0 then
+        deltaY = deltaY - 1 
+    elseif deltaY < 0 then
         mineOrMoveDown()
         deltaY = deltaY + 1
       end
@@ -192,26 +191,6 @@ function MoveTo(targetX, targetY, targetZ)
     elseif deltaX < 0 then
       turtle.turnTo("west")
     end
-
-    -- Move in the X direction next (east or west)
-    while deltaX ~= 0 do
-      if deltaX > 0 then
-        while turtle.detect() do
-          turtle.dig()
-         end
-         turtle.forward()
-         sleep(0.5)
-        deltaX = deltaX - 1
-      end 
-      if deltaX < 0 then
-        while turtle.detect() do
-          turtle.dig()
-         end
-         turtle.forward()
-         sleep(0.5)
-        deltaX = deltaX + 1
-      end
-    end 
 
     if deltaZ > 0 then 
       turtle.turnTo("south")
@@ -227,15 +206,34 @@ function MoveTo(targetX, targetY, targetZ)
          end
          turtle.forward()
          sleep(0.5)
-        deltaZ = deltaZ - 1
-      end 
-      if deltaZ < 0 then
+        deltaZ = deltaZ - 1 
+    elseif deltaZ < 0 then
         while turtle.detect() do
           turtle.dig()
          end
          turtle.forward()
          sleep(0.5)
         deltaZ = deltaZ + 1
+      end
+    end 
+    
+    -- Move in the X direction next (east or west)
+    while deltaX ~= 0 do
+      if deltaX > 0 then
+        while turtle.detect() do
+          turtle.dig()
+         end
+         turtle.forward()
+         sleep(0.5)
+        deltaX = deltaX - 1
+       
+    elseif deltaX < 0 then
+        while turtle.detect() do
+          turtle.dig()
+         end
+         turtle.forward()
+         sleep(0.5)
+        deltaX = deltaX + 1
       end
     end 
 
