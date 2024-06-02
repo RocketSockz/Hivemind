@@ -266,7 +266,6 @@ function turtle.turnTo(direction, cachedDirection)
   
     local dx = newX - currentX
     local dz = newZ - currentZ
-    local currentDirection
   
     print("dx : ", dx, "\ndz : ", dz)
     if dx == 1 then
