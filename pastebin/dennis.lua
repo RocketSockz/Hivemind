@@ -160,8 +160,6 @@ function ReturnToStart()
 
   print("Current coordinates: ", GetCurrentPosition())
   MoveTo(startingX, startingY, startingZ)
-  -- We want the turtle to face west when it returns to the starting position
-  turtle.turnTo("west")
   print("Returned to starting coordinates.")
 end
 
@@ -240,6 +238,9 @@ function MoveTo(targetX, targetY, targetZ)
     turtleDirectionFacingCache = turtleDirectionFacing -- Cache the direction we are facing, so we don't have to do it again
     if deltaX == 0 and deltaY == 0 and deltaZ == 0 then
       print("Reached target coordinates: ", targetX, targetY, targetZ)
+      -- Once we reach out target coordinates, we want to turn the turtle to the west. 
+      -- That is just our default, we can always change that.
+      FaceDirection("west", turtleDirectionFacing)
       break
     end
   end
