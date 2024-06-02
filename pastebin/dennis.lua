@@ -97,7 +97,7 @@ local function mineLayer()
       turtle.turnLeft()
       turtle.turnLeft()
     elseif direction == 1 then
-      turtle.turnLeft()
+      turtle.turnRight()
     end
   end
   return true;
