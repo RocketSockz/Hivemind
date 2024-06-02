@@ -180,7 +180,7 @@ function MoveTo(targetX, targetY, targetZ)
   while true do
     -- Call the function to calculate the deltas
     local deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
-
+    local turtleDirectionFacing = nil
     print("Initial Delta", deltaX, deltaY, deltaZ)
     -- Move in the Y direction first (up or down)
     while deltaY ~= 0 do
@@ -195,29 +195,27 @@ function MoveTo(targetX, targetY, targetZ)
     end
 
     if deltaX > 0 then
-      turtle.turnTo("east")
+      turtleDirectionFacing = FaceDirection(turtleDirectionFacing, "east")
     elseif deltaX < 0 then
-      turtle.turnTo("west")
+      turtleDirectionFacing =  FaceDirection(turtleDirectionFacing, "west")
     end
 
     if deltaZ > 0 then
-      turtle.turnTo("south")
+      turtleDirectionFacing =  FaceDirection(turtleDirectionFacing, "south")
     elseif deltaZ < 0 then
-      turtle.turnTo("north")
+      turtleDirectionFacing =  FaceDirection(turtleDirectionFacing, "north")
     end
 
     -- Move in the Z direction last (north or south)
     while deltaZ ~= 0 do
       print("Moving towards Z")
       if deltaZ > 0 then
-        turtle.turnTo("south")
+        FaceDirection(turtleDirectionFacing, "south")
         mineOrMoveForward()
-        sleep(0.5)
         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
       elseif deltaZ < 0 then
-        turtle.turnTo("north")
+        FaceDirection(turtleDirectionFacing, "north")
         mineOrMoveForward()
-        sleep(0.5)
         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
       end
     end
@@ -226,13 +224,13 @@ function MoveTo(targetX, targetY, targetZ)
     while deltaX ~= 0 do
       print("Moving towards X")
       if deltaX > 0 then
-        turtle.turnTo("east")
+        FaceDirection(turtleDirectionFacing, "east")
         mineOrMoveForward()
 
         sleep(0.5)
         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
       elseif deltaX < 0 then
-        turtle.turnTo("west")
+        FaceDirection(turtleDirectionFacing, "west")
         mineOrMoveForward()
 
         sleep(0.5)
@@ -248,10 +246,18 @@ function MoveTo(targetX, targetY, targetZ)
   end
 end
 
+
+function FaceDirection(currentDirection, targetDirection)
+  if currentDirection == targetDirection then
+    return currentDirection
+  end
+  return turtle.turnTo(targetDirection)
+end
+
 -- Function to turn the turtle to a specific cardinal direction
 function turtle.turnTo(direction)
   local currentX, _, currentZ = gps.locate()
-  turtle.forward()
+  turtle.mineOrMoveForward()
   local newX, _, newZ = gps.locate()
 
   local dx = newX - currentX
@@ -271,10 +277,9 @@ function turtle.turnTo(direction)
   local directions = { "north", "east", "south", "west" }
   local currentIndex = nil
   for i, dir in ipairs(directions) do
-    print("dir: ", dir, "currentDirection: ", currentDirection)
     if dir == currentDirection then
       currentIndex = i
-      break
+      return currentDirection
     end
   end
 
@@ -282,7 +287,7 @@ function turtle.turnTo(direction)
   for i, dir in ipairs(directions) do
     if dir == direction then
       targetIndex = i
-      break
+      return currentDirection
     end
   end
 
@@ -295,6 +300,7 @@ function turtle.turnTo(direction)
     turtle.turnRight()
     turtle.turnRight()
   end
+  return currentDirection
 end
 
 local function main()
