@@ -161,7 +161,7 @@ function ReturnToStart()
   print("Current coordinates: ", GetCurrentPosition())
   MoveTo(startingX, startingY, startingZ)
   -- We want the turtle to face west when it returns to the starting position
-  turtle.turnTo(3)
+  turtle.turnTo("west")
   print("Returned to starting coordinates.")
 end
 
@@ -177,10 +177,11 @@ end
 
 function MoveTo(targetX, targetY, targetZ)
   print("Moving to target coordinates: ", targetX, targetY, targetZ)
+  local turtleDirectionFacingCache = nil
   while true do
     -- Call the function to calculate the deltas
     local deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
-    local turtleDirectionFacing = nil
+    local turtleDirectionFacing = turtleDirectionFacingCache
     print("Initial Delta", deltaX, deltaY, deltaZ)
     -- Move in the Y direction first (up or down)
     while deltaY ~= 0 do
@@ -236,6 +237,7 @@ function MoveTo(targetX, targetY, targetZ)
     end
 
     deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ) -- Check if we've reached the target coordinates
+    turtleDirectionFacingCache = turtleDirectionFacing -- Cache the direction we are facing, so we don't have to do it again
     if deltaX == 0 and deltaY == 0 and deltaZ == 0 then
       print("Reached target coordinates: ", targetX, targetY, targetZ)
       break
