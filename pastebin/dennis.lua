@@ -250,29 +250,34 @@ function FaceDirection(currentDirection, targetDirection)
   if currentDirection == targetDirection then
     return currentDirection
   else 
-    return turtle.turnTo(targetDirection)
+    return turtle.turnTo(targetDirection, currentDirection)
   end
 end
 
 -- Function to turn the turtle to a specific cardinal direction
-function turtle.turnTo(direction)
-  local currentX, _, currentZ = gps.locate()
-  MineOrMoveForward()
-  local newX, _, newZ = gps.locate()
-
-  local dx = newX - currentX
-  local dz = newZ - currentZ
+function turtle.turnTo(direction, cachedDirection)
   local currentDirection
-
-  print("dx : ", dx, "\ndz : ", dz)
-  if dx == 1 then
-    currentDirection = "east"
-  elseif dx == -1 then
-    currentDirection = "west"
-  elseif dz == 1 then
-    currentDirection = "south"
-  elseif dz == -1 then
-    currentDirection = "north"
+  if cachedDirection then 
+    currentDirection = cachedDirection
+  else 
+    local currentX, _, currentZ = gps.locate()
+    MineOrMoveForward()
+    local newX, _, newZ = gps.locate()
+  
+    local dx = newX - currentX
+    local dz = newZ - currentZ
+    local currentDirection
+  
+    print("dx : ", dx, "\ndz : ", dz)
+    if dx == 1 then
+      currentDirection = "east"
+    elseif dx == -1 then
+      currentDirection = "west"
+    elseif dz == 1 then
+      currentDirection = "south"
+    elseif dz == -1 then
+      currentDirection = "north"
+    end
   end
 
   -- WEST / NORTH 
