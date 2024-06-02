@@ -248,7 +248,7 @@ end
 
 
 function FaceDirection(currentDirection, targetDirection)
-  print("Currently Facing: ", currentDirection, "Target Direction: ", targetDirection)
+  print("Currently Facing: ", currentDirection, "\nTarget Direction: ", targetDirection)
   if currentDirection == targetDirection then
     return currentDirection
   end
@@ -265,6 +265,7 @@ function turtle.turnTo(direction)
   local dz = newZ - currentZ
   local currentDirection
 
+  print("dx : ", dx, "\ndz : ", dz)
   if dx == 1 then
     currentDirection = "east"
   elseif dx == -1 then
