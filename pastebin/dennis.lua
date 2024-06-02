@@ -1,7 +1,7 @@
 -- Configuration
 local quarry_start_distance = 3
-local quarry_size = 3
-local quarry_depth = 1
+local quarry_size = 2
+local quarry_depth = 100
 local startingX, startingY, startingZ
 
 -- GPS Stuff
@@ -97,8 +97,7 @@ local function mineLayer()
       turtle.turnLeft()
       turtle.turnLeft()
     elseif direction == 1 then
-      turtle.turnRight()
-      turtle.turnRight()
+      turtle.turnLeft()
     end
   end
   return true;
