@@ -227,7 +227,7 @@ function MoveTo(targetX, targetY, targetZ)
       if directionToFace then
         turtleDirectionFacing  = FaceDirection(turtleDirectionFacing, directionToFace)
         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
-        if deltaZ == 0 then
+        if deltaX == 0 then
           break
         end
         MineOrMoveForward()
@@ -257,9 +257,11 @@ function turtle.turnTo(direction, cachedDirection)
   local currentDirection
   if cachedDirection == direction then 
     return cachedDirection
-  elseif cachedDirection ~= nil then 
+  elseif cachedDirection then
+    print("Cached direction set to current: ", cachedDirection) 
     currentDirection = cachedDirection
   else 
+    print("Locating current direction")
     local currentX, _, currentZ = gps.locate()
     MineOrMoveForward()
     local newX, _, newZ = gps.locate()
@@ -277,6 +279,7 @@ function turtle.turnTo(direction, cachedDirection)
     elseif dz == -1 then
       currentDirection = "north"
     end
+    print("Current direction set: ", currentDirection)
   end
 
   -- WEST / NORTH 
@@ -300,7 +303,9 @@ function turtle.turnTo(direction, cachedDirection)
     end
   end
 
+  print("Target Direction: ", direction, "Current Direction: ", currentDirection)
   local difference = targetIndex - currentIndex
+  print("Difference: ", difference)
   if difference == 1 or difference == -3 then 
     turtle.turnRight()
     sleep(2)
