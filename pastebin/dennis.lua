@@ -257,8 +257,8 @@ end
 -- Function to turn the turtle to a specific cardinal direction
 function turtle.turnTo(direction, cachedDirection)
   local currentDirection
-  if cachedDirection then 
-    currentDirection = cachedDirection
+  if cachedDirection == direction then 
+    return cachedDirection
   else 
     local currentX, _, currentZ = gps.locate()
     MineOrMoveForward()
