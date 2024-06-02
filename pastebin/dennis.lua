@@ -6,19 +6,19 @@ local startingX, startingY, startingZ
 
 -- GPS Stuff
 local function trackStartingCoordinates()
- startingX, startingY, startingZ = gps.locate()
- print("Set starting coordinates to: ", startingX, startingY, startingZ)
- if not startingX then
-  print("GPS signal not found! Make sure you are in range of GPS satellites.")
- end
+  startingX, startingY, startingZ = gps.locate()
+  print("Set starting coordinates to: ", startingX, startingY, startingZ)
+  if not startingX then
+    print("GPS signal not found! Make sure you are in range of GPS satellites.")
+  end
 end
 
 local function refuelIfNeeded()
- if turtle.getFuelLevel() < (quarry_start_distance + (quarry_size * quarry_size * quarry_depth)) then
-  print("Not enough fuel. Please refuel the turtle.")
-  return false
- end
- return true
+  if turtle.getFuelLevel() < (quarry_start_distance + (quarry_size * quarry_size * quarry_depth)) then
+    print("Not enough fuel. Please refuel the turtle.")
+    return false
+  end
+  return true
 end
 
 ---
@@ -28,10 +28,10 @@ end
 --- @return void
 ---
 local function mineOrMoveForward()
- while turtle.detect() do
-  turtle.dig()
- end
- turtle.forward()
+  while turtle.detect() do
+    turtle.dig()
+  end
+  turtle.forward()
 end
 
 ---
@@ -41,99 +41,100 @@ end
 --- @return void
 ---
 local function mineOrMoveDown()
- while turtle.detectDown() do
-  turtle.digDown()
- end
- turtle.down()
+  while turtle.detectDown() do
+    turtle.digDown()
+  end
+  turtle.down()
 end
 
 local function mineOrMoveUp()
- while turtle.detectUp() do
-  turtle.digUp()
- end
- turtle.up()
+  while turtle.detectUp() do
+    turtle.digUp()
+  end
+  turtle.up()
 end
 
 local function moveUp()
- while not turtle.up() do
-  turtle.digUp()
- end
+  while not turtle.up() do
+    turtle.digUp()
+  end
 end
 
 local function moveToQuarryStart()
- for i = 1, quarry_start_distance do
-  mineOrMoveForward()
- end
+  for i = 1, quarry_start_distance do
+    mineOrMoveForward()
+  end
 end
 
 local function mineLayer()
- -- We treat 0 as right, and 1 as left
- local direction = 0
- for x = 0, quarry_size - 1 do
-  for y = 0, quarry_size - 1 do
-   if IsInventoryFull() then
-    print("Inventory is full. Returning to the surface.")
-    return false;
-   end
-   if y < quarry_size - 1 then
-    mineOrMoveForward()
-   end
-   -- mineOrMoveForward()
+  -- We treat 0 as right, and 1 as left
+  local direction = 0
+  for x = 0, quarry_size - 1 do
+    for y = 0, quarry_size - 1 do
+      if IsInventoryFull() then
+        print("Inventory is full. Returning to the surface.")
+        return false;
+      end
+      if y < quarry_size - 1 then
+        mineOrMoveForward()
+      end
+      -- mineOrMoveForward()
+    end
+    if x < quarry_size - 1 then
+      if direction == 0 then
+        turtle.turnRight()
+        mineOrMoveForward()
+        turtle.turnRight()
+        direction = 1
+      else
+        turtle.turnLeft()
+        mineOrMoveForward()
+        turtle.turnLeft()
+        direction = 0
+      end
+      -- We do the inverse to keep the mining going
+    elseif direction == 0 then
+      turtle.turnLeft()
+      turtle.turnLeft()
+    elseif direction == 1 then
+      turtle.turnRight()
+      turtle.turnRight()
+    end
   end
-  if x < quarry_size - 1 then
-   if direction == 0 then
-    turtle.turnRight()
-    mineOrMoveForward()
-    turtle.turnRight()
-    direction = 1
-   else
-    turtle.turnLeft()
-    mineOrMoveForward()
-    turtle.turnLeft()
-    direction = 0
-   end
-   -- We do the inverse to keep the mining going
-  elseif direction == 0 then
-   turtle.turnLeft()
-   turtle.turnLeft()
-  elseif direction == 1 then
-   turtle.turnRight()
-   turtle.turnRight()
-  end
- end
- return true;
+  return true;
 end
 
 function IsInventoryFull()
- for i = 1, 16 do
-  local slot = turtle.getItemDetail(i)
-  if not slot then
-   return false
+  for i = 1, 16 do
+    local slot = turtle.getItemDetail(i)
+    if not slot then
+      return false
+    end
   end
- end
- return true
+  return true
 end
 
 local function mineQuarry()
- for z = 1, quarry_depth do
-  local mineNoWorky = mineLayer()
-  if not mineNoWorky then
-   ReturnToStart()
+  for z = 1, quarry_depth do
+    local mineNoWorky = mineLayer()
+    if not mineNoWorky then
+      ReturnToStart()
+    end
+    if z < quarry_depth then
+      mineOrMoveDown()
+    end
   end
-  if z < quarry_depth then
-   mineOrMoveDown()
-  end
- end
 end
 
 function GetCurrentPosition()
   local x, y, z = gps.locate()
   if x and y and z then
-      return x, y, z
+    return x, y, z
   else
-      error("Unable to determine position, ensure the GPS network is setup correctly.")
+    error("Unable to determine position, ensure the GPS network is setup correctly.")
   end
 end
+
 -- local function returnToStart()
 --   for i = 1, quarry_size - 1 do
 --     turtle.forward()
@@ -143,7 +144,7 @@ end
 --     turtle.forward()
 --   end
 --   turtle.turnLeft()
---   for i = 1, quarry_start_distance do 
+--   for i = 1, quarry_start_distance do
 --     turtle.forward()
 --   end
 --   turtle.turnRight()
@@ -152,16 +153,16 @@ end
 
 -- Function to return to starting coordinates
 function ReturnToStart()
- if not startingX then
-  print("Starting coordinates not set. Cannot return to start.")
-  return
- end
+  if not startingX then
+    print("Starting coordinates not set. Cannot return to start.")
+    return
+  end
 
- print("Current coordinates: ", GetCurrentPosition())
- MoveTo(startingX, startingY, startingZ)
- -- We want the turtle to face west when it returns to the starting position
- turtle.turnTo(3)
- print("Returned to starting coordinates.")
+  print("Current coordinates: ", GetCurrentPosition())
+  MoveTo(startingX, startingY, startingZ)
+  -- We want the turtle to face west when it returns to the starting position
+  turtle.turnTo(3)
+  print("Returned to starting coordinates.")
 end
 
 -- Calculate the differences
@@ -187,19 +188,19 @@ function MoveTo(targetX, targetY, targetZ)
       if deltaY > 0 then
         mineOrMoveUp()
         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
-    elseif deltaY < 0 then
+      elseif deltaY < 0 then
         mineOrMoveDown()
         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
       end
-    end 
+    end
 
-    if deltaX > 0 then 
+    if deltaX > 0 then
       turtle.turnTo("east")
     elseif deltaX < 0 then
       turtle.turnTo("west")
     end
 
-    if deltaZ > 0 then 
+    if deltaZ > 0 then
       turtle.turnTo("south")
     elseif deltaZ < 0 then
       turtle.turnTo("north")
@@ -209,49 +210,42 @@ function MoveTo(targetX, targetY, targetZ)
     while deltaZ ~= 0 do
       print("Moving towards Z")
       if deltaZ > 0 then
-        while turtle.detect() do
-          turtle.dig()
-         end
-         turtle.forward()
-         sleep(0.5)
-         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
-        elseif deltaZ < 0 then
-        while turtle.detect() do
-          turtle.dig()
-         end
-         turtle.forward()
-         sleep(0.5)
-         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
-        end
-    end 
-    
+        turtle.turnTo("south")
+        mineOrMoveForward()
+        sleep(0.5)
+        deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
+      elseif deltaZ < 0 then
+        turtle.turnTo("north")
+        mineOrMoveForward()
+        sleep(0.5)
+        deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
+      end
+    end
+
     -- Move in the X direction next (east or west)
     while deltaX ~= 0 do
       print("Moving towards X")
       if deltaX > 0 then
-        while turtle.detect() do
-          turtle.dig()
-         end
-         turtle.forward()
-         sleep(0.5)
-         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
-       
-    elseif deltaX < 0 then
-        while turtle.detect() do
-          turtle.dig()
-         end
-         turtle.forward()
-         sleep(0.5)
-         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
-        end
-    end 
+        turtle.turnTo("east")
+        mineOrMoveForward()
 
-    deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)    -- Check if we've reached the target coordinates
-    if deltaX == 0 and deltaY == 0 and deltaZ == 0 then
-        print("Reached target coordinates: ", targetX, targetY, targetZ)
-        break
+        sleep(0.5)
+        deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
+      elseif deltaX < 0 then
+        turtle.turnTo("west")
+        mineOrMoveForward()
+
+        sleep(0.5)
+        deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
+      end
     end
- end
+
+    deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ) -- Check if we've reached the target coordinates
+    if deltaX == 0 and deltaY == 0 and deltaZ == 0 then
+      print("Reached target coordinates: ", targetX, targetY, targetZ)
+      break
+    end
+  end
 end
 
 -- Function to turn the turtle to a specific cardinal direction
@@ -259,66 +253,66 @@ function turtle.turnTo(direction)
   local currentX, _, currentZ = gps.locate()
   turtle.forward()
   local newX, _, newZ = gps.locate()
-  
+
   local dx = newX - currentX
   local dz = newZ - currentZ
   local currentDirection
 
   if dx == 1 then
-      currentDirection = "east"
+    currentDirection = "east"
   elseif dx == -1 then
-      currentDirection = "west"
+    currentDirection = "west"
   elseif dz == 1 then
-      currentDirection = "south"
+    currentDirection = "south"
   elseif dz == -1 then
-      currentDirection = "north"
+    currentDirection = "north"
   end
-  
-  local directions = {"north", "east", "south", "west"}
+
+  local directions = { "north", "east", "south", "west" }
   local currentIndex = nil
   for i, dir in ipairs(directions) do
-      print("dir: ", dir, "currentDirection: ", currentDirection)
-      if dir == currentDirection then
-          currentIndex = i
-          break
-      end
+    print("dir: ", dir, "currentDirection: ", currentDirection)
+    if dir == currentDirection then
+      currentIndex = i
+      break
+    end
   end
 
   local targetIndex = nil
   for i, dir in ipairs(directions) do
-      if dir == direction then
-          targetIndex = i
-          break
-      end
+    if dir == direction then
+      targetIndex = i
+      break
+    end
   end
-  
+
   local difference = targetIndex - currentIndex
   if difference == 1 or difference == -3 then
-      turtle.turnRight()
+    turtle.turnRight()
   elseif difference == -1 or difference == 3 then
-      turtle.turnLeft()
+    turtle.turnLeft()
   elseif math.abs(difference) == 2 then
-      turtle.turnRight()
-      turtle.turnRight()
+    turtle.turnRight()
+    turtle.turnRight()
   end
 end
 
 local function main()
- if not refuelIfNeeded() then
-  return
- end
+  if not refuelIfNeeded() then
+    return
+  end
 
- if IsInventoryFull() then
-  print("Inventory is full. Please empty the turtle.")
-  return
- end
+  if IsInventoryFull() then
+    print("Inventory is full. Please empty the turtle.")
+    return
+  end
 
- trackStartingCoordinates()
- moveToQuarryStart()
- mineOrMoveDown()
- mineQuarry()
- ReturnToStart()
- print("Quarrying complete. Returned to the starting position.")
+  trackStartingCoordinates()
+  moveToQuarryStart()
+  mineOrMoveDown()
+  mineQuarry()
+  ReturnToStart()
+  print("Quarrying complete. Returned to the starting position.")
 end
 
 main()
