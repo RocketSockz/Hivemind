@@ -164,25 +164,30 @@ function ReturnToStart()
  print("Returned to starting coordinates.")
 end
 
+-- Calculate the differences
+local function calculateDeltas(targetX, targetY, targetZ)
+  local currentX, currentY, currentZ = GetCurrentPosition()
+  local deltaX = targetX - currentX
+  local deltaY = targetY - currentY
+  local deltaZ = targetZ - currentZ
+  return deltaX, deltaY, deltaZ
+end
+
 function MoveTo(targetX, targetY, targetZ)
   print("Moving to target coordinates: ", targetX, targetY, targetZ)
   while true do
-    local currentX, currentY, currentZ = GetCurrentPosition()
-    
-    -- Calculate the differences
-    local deltaX = targetX - currentX
-    local deltaY = targetY - currentY
-    local deltaZ = targetZ - currentZ
+    -- Call the function to calculate the deltas
+    local deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
 
     print("Initial Delta", deltaX, deltaY, deltaZ)
     -- Move in the Y direction first (up or down)
     while deltaY ~= 0 do
       if deltaY > 0 then
         mineOrMoveUp()
-        deltaY = deltaY - 1 
+        deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
     elseif deltaY < 0 then
         mineOrMoveDown()
-        deltaY = deltaY + 1
+        deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
       end
     end 
 
@@ -206,15 +211,15 @@ function MoveTo(targetX, targetY, targetZ)
          end
          turtle.forward()
          sleep(0.5)
-        deltaZ = deltaZ - 1 
-    elseif deltaZ < 0 then
+         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
+        elseif deltaZ < 0 then
         while turtle.detect() do
           turtle.dig()
          end
          turtle.forward()
          sleep(0.5)
-        deltaZ = deltaZ + 1
-      end
+         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
+        end
     end 
     
     -- Move in the X direction next (east or west)
@@ -225,7 +230,7 @@ function MoveTo(targetX, targetY, targetZ)
          end
          turtle.forward()
          sleep(0.5)
-        deltaX = deltaX - 1
+         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
        
     elseif deltaX < 0 then
         while turtle.detect() do
@@ -233,13 +238,12 @@ function MoveTo(targetX, targetY, targetZ)
          end
          turtle.forward()
          sleep(0.5)
-        deltaX = deltaX + 1
-      end
+         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
+        end
     end 
 
-    local currentX, currentY, currentZ = GetCurrentPosition()
-    -- Check if we've reached the target coordinates
-    if currentX == targetX and currentY == targetY and currentZ == targetZ then
+    deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)    -- Check if we've reached the target coordinates
+    if deltaX == 0 and deltaY == 0 and deltaZ == 0 then
         print("Reached target coordinates: ", targetX, targetY, targetZ)
         break
     end
