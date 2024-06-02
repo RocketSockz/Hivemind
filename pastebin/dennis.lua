@@ -194,45 +194,43 @@ function MoveTo(targetX, targetY, targetZ)
       end
     end
 
-    if deltaX > 0 then
-      turtleDirectionFacing = FaceDirection(turtleDirectionFacing, "east")
-    elseif deltaX < 0 then
-      turtleDirectionFacing =  FaceDirection(turtleDirectionFacing, "west")
-    end
-
-    if deltaZ > 0 then
-      turtleDirectionFacing =  FaceDirection(turtleDirectionFacing, "south")
-    elseif deltaZ < 0 then
-      turtleDirectionFacing =  FaceDirection(turtleDirectionFacing, "north")
-    end
-
     -- Move in the Z direction last (north or south)
     while deltaZ ~= 0 do
       print("Moving towards Z")
+      local directionToFace = nil
       if deltaZ > 0 then
-        turtleDirectionFacing  = FaceDirection(turtleDirectionFacing, "south")
-        MineOrMoveForward()
-        deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
+        directionToFace = "south"
       elseif deltaZ < 0 then
-        turtleDirectionFacing = FaceDirection(turtleDirectionFacing, "north")
+        directionToFace = "north"
+      end
+
+      if directionToFace then
+        turtleDirectionFacing  = FaceDirection(turtleDirectionFacing, directionToFace)
+        deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
+        if deltaZ == 0 then
+          break
+        end
         MineOrMoveForward()
         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
       end
     end
 
-    -- Move in the X direction next (east or west)
     while deltaX ~= 0 do
       print("Moving towards X")
+      local directionToFace = nil
       if deltaX > 0 then
-        turtleDirectionFacing = FaceDirection(turtleDirectionFacing, "east")
-        MineOrMoveForward()
-
-        sleep(0.5)
-        deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
+        directionToFace = "east"
       elseif deltaX < 0 then
-        turtleDirectionFacing = FaceDirection(turtleDirectionFacing, "west")
-        MineOrMoveForward()
+        directionToFace = "west"
+      end
 
+      if directionToFace then
+        turtleDirectionFacing  = FaceDirection(turtleDirectionFacing, directionToFace)
+        deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
+        if deltaZ == 0 then
+          break
+        end
+        MineOrMoveForward()
         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
       end
     end
@@ -259,6 +257,8 @@ function turtle.turnTo(direction, cachedDirection)
   local currentDirection
   if cachedDirection == direction then 
     return cachedDirection
+  elseif cachedDirection ~= nil then 
+    currentDirection = cachedDirection
   else 
     local currentX, _, currentZ = gps.locate()
     MineOrMoveForward()
