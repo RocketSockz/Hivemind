@@ -27,7 +27,7 @@ end
 ---
 --- @return void
 ---
-local function mineOrMoveForward()
+function MineOrMoveForward()
   while turtle.detect() do
     turtle.dig()
   end
@@ -62,7 +62,7 @@ end
 
 local function moveToQuarryStart()
   for i = 1, quarry_start_distance do
-    mineOrMoveForward()
+    MineOrMoveForward()
   end
 end
 
@@ -76,19 +76,19 @@ local function mineLayer()
         return false;
       end
       if y < quarry_size - 1 then
-        mineOrMoveForward()
+        MineOrMoveForward()
       end
-      -- mineOrMoveForward()
+      -- MineOrMoveForward()
     end
     if x < quarry_size - 1 then
       if direction == 0 then
         turtle.turnRight()
-        mineOrMoveForward()
+        MineOrMoveForward()
         turtle.turnRight()
         direction = 1
       else
         turtle.turnLeft()
-        mineOrMoveForward()
+        MineOrMoveForward()
         turtle.turnLeft()
         direction = 0
       end
@@ -211,11 +211,11 @@ function MoveTo(targetX, targetY, targetZ)
       print("Moving towards Z")
       if deltaZ > 0 then
         turtleDirectionFacing  = FaceDirection(turtleDirectionFacing, "south")
-        mineOrMoveForward()
+        MineOrMoveForward()
         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
       elseif deltaZ < 0 then
         turtleDirectionFacing = FaceDirection(turtleDirectionFacing, "north")
-        mineOrMoveForward()
+        MineOrMoveForward()
         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
       end
     end
@@ -225,13 +225,13 @@ function MoveTo(targetX, targetY, targetZ)
       print("Moving towards X")
       if deltaX > 0 then
         turtleDirectionFacing = FaceDirection(turtleDirectionFacing, "east")
-        mineOrMoveForward()
+        MineOrMoveForward()
 
         sleep(0.5)
         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
       elseif deltaX < 0 then
         turtleDirectionFacing = FaceDirection(turtleDirectionFacing, "west")
-        mineOrMoveForward()
+        MineOrMoveForward()
 
         sleep(0.5)
         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
@@ -258,7 +258,7 @@ end
 -- Function to turn the turtle to a specific cardinal direction
 function turtle.turnTo(direction)
   local currentX, _, currentZ = gps.locate()
-  mineOrMoveForward()
+  MineOrMoveForward()
   local newX, _, newZ = gps.locate()
 
   local dx = newX - currentX
