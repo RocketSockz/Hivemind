@@ -210,11 +210,11 @@ function MoveTo(targetX, targetY, targetZ)
     while deltaZ ~= 0 do
       print("Moving towards Z")
       if deltaZ > 0 then
-        FaceDirection(turtleDirectionFacing, "south")
+        turtleDirectionFacing  = FaceDirection(turtleDirectionFacing, "south")
         mineOrMoveForward()
         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
       elseif deltaZ < 0 then
-        FaceDirection(turtleDirectionFacing, "north")
+        turtleDirectionFacing = FaceDirection(turtleDirectionFacing, "north")
         mineOrMoveForward()
         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
       end
@@ -224,13 +224,13 @@ function MoveTo(targetX, targetY, targetZ)
     while deltaX ~= 0 do
       print("Moving towards X")
       if deltaX > 0 then
-        FaceDirection(turtleDirectionFacing, "east")
+        turtleDirectionFacing = FaceDirection(turtleDirectionFacing, "east")
         mineOrMoveForward()
 
         sleep(0.5)
         deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ)
       elseif deltaX < 0 then
-        FaceDirection(turtleDirectionFacing, "west")
+        turtleDirectionFacing = FaceDirection(turtleDirectionFacing, "west")
         mineOrMoveForward()
 
         sleep(0.5)
@@ -248,6 +248,7 @@ end
 
 
 function FaceDirection(currentDirection, targetDirection)
+  print("Currently Facing: ", currentDirection, "Target Direction: ", targetDirection)
   if currentDirection == targetDirection then
     return currentDirection
   end
@@ -257,7 +258,7 @@ end
 -- Function to turn the turtle to a specific cardinal direction
 function turtle.turnTo(direction)
   local currentX, _, currentZ = gps.locate()
-  turtle.mineOrMoveForward()
+  mineOrMoveForward()
   local newX, _, newZ = gps.locate()
 
   local dx = newX - currentX
