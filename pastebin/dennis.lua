@@ -13,13 +13,24 @@ local function trackStartingCoordinates()
   end
 end
 
-local function refuelIfNeeded()
-  if turtle.getFuelLevel() < (quarry_start_distance + (quarry_size * quarry_size * quarry_depth)) then
+local function checkFuelLevel()
+  -- Calculate the distance to travel the entire quarry
+  local quarryTravelDistance = quarry_start_distance + (quarry_size * quarry_size * quarry_depth)
+
+  -- Calculate the maximum possible return distance (worst case scenario)
+  local maxReturnDistance = (quarry_size - 1) * 2 + quarry_depth + quarry_start_distance
+
+  -- Calculate total fuel needed
+  local totalFuelNeeded = quarryTravelDistance + maxReturnDistance
+
+  if turtle.getFuelLevel() < totalFuelNeeded then
     print("Not enough fuel. Please refuel the turtle.")
     return false
   end
+
   return true
 end
+
 
 ---
 --- Looks to see if there is a block, if there is it mines it - then moves forward.
@@ -54,16 +65,38 @@ local function mineOrMoveUp()
   turtle.up()
 end
 
-local function moveUp()
-  while not turtle.up() do
-    turtle.digUp()
-  end
-end
-
 local function moveToQuarryStart()
   for i = 1, quarry_start_distance do
     MineOrMoveForward()
   end
+end
+
+local function isWasteItem(itemName)
+  local wasteItems = {
+    "minecraft:cobblestone",
+    "minecraft:dirt",
+    "minecraft:gravel",
+    "minecraft:sand",
+    "minecraft:netherrack"
+    -- Add more waste items as needed
+  }
+  for _, waste in ipairs(wasteItems) do
+    if itemName == waste then
+      return true
+    end
+  end
+  return false
+end
+
+local function dropWasteItems()
+  for i = 1, 16 do
+    local itemDetail = turtle.getItemDetail(i)
+    if itemDetail and isWasteItem(itemDetail.name) then
+      turtle.select(i)
+      turtle.drop()
+    end
+  end
+  turtle.select(1) -- Reset to the first slot
 end
 
 local function mineLayer()
@@ -72,8 +105,14 @@ local function mineLayer()
   for x = 0, quarry_size - 1 do
     for y = 0, quarry_size - 1 do
       if IsInventoryFull() then
-        print("Inventory is full. Returning to the surface.")
-        return false;
+        -- if the inventory is full, we want to go through the turtles inventory and drop any wasteful items (cobble, dirt, etc.)
+        dropWasteItems()
+        if IsInventoryFull() then
+          -- If inventory is still full after dropping waste items, return to surface
+          print("Inventory still full after dropping waste items. Returning to the surface.")
+          ReturnToSurface()
+          return false
+        end
       end
       if y < quarry_size - 1 then
         MineOrMoveForward()
@@ -234,10 +273,11 @@ function MoveTo(targetX, targetY, targetZ)
     end
 
     deltaX, deltaY, deltaZ = calculateDeltas(targetX, targetY, targetZ) -- Check if we've reached the target coordinates
-    turtleDirectionFacingCache = turtleDirectionFacing -- Cache the direction we are facing, so we don't have to do it again
+    turtleDirectionFacingCache =
+    turtleDirectionFacing                                               -- Cache the direction we are facing, so we don't have to do it again
     if deltaX == 0 and deltaY == 0 and deltaZ == 0 then
       print("Reached target coordinates: ", targetX, targetY, targetZ)
-      -- Once we reach out target coordinates, we want to turn the turtle to the west. 
+      -- Once we reach out target coordinates, we want to turn the turtle to the west.
       -- That is just our default, we can always change that.
       FaceDirection("west", turtleDirectionFacing)
       break
@@ -245,11 +285,10 @@ function MoveTo(targetX, targetY, targetZ)
   end
 end
 
-
 function FaceDirection(currentDirection, targetDirection)
   if currentDirection == targetDirection then
     return currentDirection
-  else 
+  else
     return turtle.turnTo(targetDirection, currentDirection)
   end
 end
@@ -257,21 +296,21 @@ end
 -- Function to turn the turtle to a specific cardinal direction
 function turtle.turnTo(direction, cachedDirection)
   local currentDirection
-  if cachedDirection == direction then 
+  if cachedDirection == direction then
     return cachedDirection
   elseif cachedDirection then
-    print("Cached direction set to current: ", cachedDirection) 
+    print("Cached direction set to current: ", cachedDirection)
     currentDirection = cachedDirection
-  else 
+  else
     print("Locating current direction")
-    
+
     local currentX, _, currentZ = gps.locate()
     MineOrMoveForward()
     local newX, _, newZ = gps.locate()
-  
+
     local dx = newX - currentX
     local dz = newZ - currentZ
-  
+
     print("dx : ", dx, "\ndz : ", dz)
     if dx == 1 then
       currentDirection = "east"
@@ -284,12 +323,6 @@ function turtle.turnTo(direction, cachedDirection)
     end
     print("Current direction set: ", currentDirection)
   end
-
-  -- WEST / NORTH 
- -- NORTH / SOUTH 
--- SOUTH / NORTH \
--- SOUTH / WEST
--- EAST / NORTH 
 
   local directions = { "north", "east", "south", "west" }
   local currentIndex = nil
@@ -309,10 +342,10 @@ function turtle.turnTo(direction, cachedDirection)
   print("Target Direction: ", direction, "Current Direction: ", currentDirection)
   local difference = targetIndex - currentIndex
   print("Difference: ", difference)
-  if difference == 1 or difference == -3 then 
+  if difference == 1 or difference == -3 then
     turtle.turnRight()
     sleep(2)
-  elseif math.abs(difference) == 2 then 
+  elseif math.abs(difference) == 2 then
     turtle.turnRight()
     turtle.turnRight()
     sleep(2)
@@ -325,7 +358,7 @@ function turtle.turnTo(direction, cachedDirection)
 end
 
 local function main()
-  if not refuelIfNeeded() then
+  if not checkFuelLevel() then
     return
   end
 
