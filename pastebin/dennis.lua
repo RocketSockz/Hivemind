@@ -91,6 +91,7 @@ end
 local function dropWasteItems()
   for i = 1, 16 do
     local itemDetail = turtle.getItemDetail(i)
+    print("Item Detail: ", itemDetail)
     if itemDetail and isWasteItem(itemDetail.name) then
       turtle.select(i)
       turtle.drop()
@@ -279,7 +280,7 @@ function MoveTo(targetX, targetY, targetZ)
       print("Reached target coordinates: ", targetX, targetY, targetZ)
       -- Once we reach out target coordinates, we want to turn the turtle to the west.
       -- That is just our default, we can always change that.
-      FaceDirection("west", turtleDirectionFacing)
+      FaceDirection(turtleDirectionFacing, "west")
       break
     end
   end
