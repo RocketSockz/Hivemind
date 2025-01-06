@@ -24,7 +24,9 @@ local function checkFuelLevel()
   local totalFuelNeeded = quarryTravelDistance + maxReturnDistance
 
   if turtle.getFuelLevel() < totalFuelNeeded then
-    print("Not enough fuel. Please refuel the turtle.")
+    print("Not enough fuel for job. Please refuel the turtle.")
+    print("Fuel Level: ", turtle.getFuelLevel())
+    print("Fuel Needed: ", totalFuelNeeded)
     return false
   end
 
@@ -280,7 +282,7 @@ function MoveTo(targetX, targetY, targetZ)
       print("Reached target coordinates: ", targetX, targetY, targetZ)
       -- Once we reach out target coordinates, we want to turn the turtle to the west.
       -- That is just our default, we can always change that.
-      FaceDirection(turtleDirectionFacing, "west")
+      FaceDirection(turtleDirectionFacing, "north")
       break
     end
   end
