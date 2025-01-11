@@ -5,6 +5,7 @@ local files = {
     "websockets.lua",
     "turtle.lua",
     "hive.lua",
+    "rednet_coms.lua",
 }
 
 for _, file in ipairs(files) do
