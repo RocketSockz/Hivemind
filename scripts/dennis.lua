@@ -176,22 +176,6 @@ function GetCurrentPosition()
   end
 end
 
--- local function returnToStart()
---   for i = 1, quarry_size - 1 do
---     turtle.forward()
---   end
---   turtle.turnRight()
---   for i = 1, quarry_size - 1 do
---     turtle.forward()
---   end
---   turtle.turnLeft()
---   for i = 1, quarry_start_distance do
---     turtle.forward()
---   end
---   turtle.turnRight()
---   turtle.turnRight()
--- end
-
 -- Function to return to starting coordinates
 function ReturnToStart()
   if not startingX then

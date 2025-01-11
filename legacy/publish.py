@@ -1,7 +1,7 @@
 import requests
 
 # My Pastebin API key
-PASTEBIN_API_KEY = "Etpn9j2QNatzXjOSU4nLvjgcwc3x2TwF"
+PASTEBIN_API_KEY = "###"
 # We are just gonna hardcode dennis' info for now
 SCRIPT_PATH = ".\pastebin\dennis.lua"
 PASTEBIN_TITLE = "Dennis"

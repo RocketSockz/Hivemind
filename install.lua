@@ -1,7 +1,10 @@
 local baseURL = "https://raw.githubusercontent.com/RocketSockz/Hivemind/main/"
 
 local files = {
-    "pastebin/dennis.lua",
+    "scripts/dennis.lua",
+    "websockets.lua",
+    "turtle.lua",
+    "hive.lua",
 }
 
 for _, file in ipairs(files) do
