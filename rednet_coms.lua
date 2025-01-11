@@ -5,7 +5,7 @@ SERVER_ID = 1000 -- ID for the server in rednet communication
 local function openModem()
   -- Attempt to find a normal modem first
   local modemSide = peripheral.find("modem", rednet.open)
-  
+  print("Peripherals: ",  dump(peripheral.getNames()))
   if modemSide then
       print("Standard modem detected on side: " .. modemSide)
       return true
@@ -13,6 +13,7 @@ local function openModem()
 
   -- If no normal modem is found, attempt to find an ender modem
   modemSide = peripheral.find("ender_modem", rednet.open)
+
   if modemSide then
       print("Ender modem detected on side: " .. modemSide)
       return true
@@ -21,6 +22,19 @@ local function openModem()
   -- No modem found
   print("No modem found. Please attach a modem or ender modem and try again.")
   return false
+end
+
+function dump(o)
+  if type(o) == 'table' then
+     local s = '{ '
+     for k,v in pairs(o) do
+        if type(k) ~= 'number' then k = '"'..k..'"' end
+        s = s .. '['..k..'] = ' .. dump(v) .. ','
+     end
+     return s .. '} '
+  else
+     return tostring(o)
+  end
 end
 
 
