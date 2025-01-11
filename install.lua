@@ -9,7 +9,7 @@ local files = {
 }
 
 for _, file in ipairs(files) do
-    local url = baseURL .. file
+    local url = baseURL .. file .. "?nocache=" .. os.epoch("utc")
     local path = file
 
     -- Ensure the directory exists

@@ -6,7 +6,7 @@ local function openModem()
     -- Attempt to find a normal modem first
     local modemSide = peripheral.find("modem")
     if modemSide then
-        print("Standard modem detected on side: " .. modemSide)
+        print("Standard modem detected on side: " , modemSide)
         rednet.open(modemSide)
         return true
     end
@@ -14,7 +14,7 @@ local function openModem()
     -- If no normal modem is found, attempt to find an ender modem
     modemSide = peripheral.find("ender_modem")
     if modemSide then
-        print("Ender modem detected on side: " .. modemSide)
+        print("Ender modem detected on side: " , modemSide)
         rednet.open(modemSide)
         return true
     end
@@ -49,7 +49,7 @@ function SetupRednetServer()
 
     while true do
         local senderId, message = rednet.receive() -- Receive any message
-        print("Received message from ID " .. senderId .. ": " .. message)
+        print("Received message from ID " , senderId , ": " , message)
 
         if message == "exit" then
             print("Exiting server.")
@@ -58,7 +58,7 @@ function SetupRednetServer()
         end
 
         -- Send a response back to the sender
-        rednet.send(senderId, "Message received: " .. message)
+        rednet.send(senderId, "Message received: " , message)
     end
 end
 
@@ -78,12 +78,12 @@ function RednetClient()
 
         -- Send the message to the server
         rednet.send(SERVER_ID, input)
-        print("Message sent: " .. input)
+        print("Message sent: " , input)
 
         -- Wait for a response (timeout after 5 seconds)
         local senderId, response = rednet.receive(nil, 5)
         if response then
-            print("Received response from ID " .. senderId .. ": " .. response)
+            print("Received response from ID " , senderId , ": " , response)
         else
             print("No response received.")
         end
