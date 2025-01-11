@@ -46,7 +46,7 @@ function SetupRednetServer()
     print("Rednet server started. Listening for messages...")
 
     while true do
-        local senderId, message = rednet.receive()
+        local senderId, message = rednet.receive(SERVER_ID)
         print("Received message from ID " , senderId, ": ", message)
 
         if message == "exit" then
