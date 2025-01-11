@@ -4,12 +4,14 @@ SERVER_ID = 1000 -- Logical ID for the server in rednet communication
 -- Function to find and open the modem
 local function openModem()
     -- Attempt to find a normal modem first
-    local modems = peripheral.find("modem", rednet.open)
+    peripheral.find("modem", rednet.open)
     print(rednet.isOpen())
-    if not modems then
-        print("No modem found.")
+    if not rednet.isOpen() then
+        print("Rednet failed to open.")
         return false
     end 
+    print("Rednet opened.")
+    return true
 end
 
 -- Function to read the mode from a file
