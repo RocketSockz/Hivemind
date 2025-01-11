@@ -1,25 +1,27 @@
 MODE_FILE = "rednet_mode.txt"
-SERVER_ID = 1000 -- ID for the server in rednet communication
+SERVER_ID = 1000 -- Logical ID for the server in rednet communication
 
 -- Function to find and open the modem
 local function openModem()
-  -- Attempt to find a normal modem first
-  local modemSide = peripheral.find("modem")
-  if modemSide then
-      print("Standard modem detected on side: ", modemSide)
-      return true
-  end
+    -- Attempt to find a normal modem first
+    local modemSide = peripheral.find("modem")
+    if modemSide then
+        print("Standard modem detected on side: " .. modemSide)
+        rednet.open(modemSide)
+        return true
+    end
 
-  -- If no normal modem is found, attempt to find an ender modem
-  modemSide = peripheral.find("ender_modem")
-  if modemSide then
-      print("Ender modem detected on side: ", modemSide)
-      return true
-  end
+    -- If no normal modem is found, attempt to find an ender modem
+    modemSide = peripheral.find("ender_modem")
+    if modemSide then
+        print("Ender modem detected on side: " .. modemSide)
+        rednet.open(modemSide)
+        return true
+    end
 
-  -- No modem found
-  print("No modem found. Please attach a modem or ender modem and try again.")
-  return false
+    -- No modem found
+    print("No modem found. Please attach a modem or ender modem and try again.")
+    return false
 end
 
 -- Function to read the mode from a file
@@ -46,8 +48,8 @@ function SetupRednetServer()
     print("Rednet server started. Listening for messages...")
 
     while true do
-        local senderId, message = rednet.receive(SERVER_ID)
-        print("Received message from ID " , senderId, ": ", message)
+        local senderId, message = rednet.receive() -- Receive any message
+        print("Received message from ID " .. senderId .. ": " .. message)
 
         if message == "exit" then
             print("Exiting server.")
@@ -55,8 +57,8 @@ function SetupRednetServer()
             break
         end
 
-        -- Send a response back
-        rednet.send(senderId, "Message received: ", message)
+        -- Send a response back to the sender
+        rednet.send(senderId, "Message received: " .. message)
     end
 end
 
@@ -76,11 +78,15 @@ function RednetClient()
 
         -- Send the message to the server
         rednet.send(SERVER_ID, input)
-        print("Message sent: ", input)
+        print("Message sent: " .. input)
 
-        -- Wait for a response
-        local senderId, response = rednet.receive()
-        print("Received response from ID ", senderId, ": ", response)
+        -- Wait for a response (timeout after 5 seconds)
+        local senderId, response = rednet.receive(nil, 5)
+        if response then
+            print("Received response from ID " .. senderId .. ": " .. response)
+        else
+            print("No response received.")
+        end
     end
 end
 
