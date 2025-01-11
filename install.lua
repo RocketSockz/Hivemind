@@ -17,11 +17,20 @@ for _, file in ipairs(files) do
     if dir and not fs.exists(dir) then
         fs.makeDir(dir)
     end
-    
+
+    -- Delete the existing file if it exists
+    if fs.exists(path) then
+        print("File already exists: " .. path)
+        print("Overwriting...")
+        fs.delete(path)
+    end
+
     -- Use wget to download the file
     local command = string.format("wget %s %s", url, path)
     print("Running command: " .. command)
     shell.run(command)
-    
+
     print("Downloaded: " .. path)
 end
+
+print("All files have been updated.")
